@@ -35,8 +35,7 @@ router.route('/logout')
 .get(logout);
 router.route('/ping')
 .get(authJWT,(req,res)=>{
-  console.log('pong')
-  res.redirect('../thank-you')
+  res.json('pong');
 })
 
 

@@ -1,4 +1,4 @@
-const { default: axios } = require('axios');
+const { default: axios, AxiosHeaders } = require('axios');
 const { response } = require('express');
 var express = require('express');
 const { handlebars } = require('hbs');
@@ -13,10 +13,33 @@ router.route('/')
 })
 
 router.route('/login')
-.get((req,res)=>{
+.get(async (req,res)=>{
     res.render('auth/login', { 
         title: 'Express',
-    });
+    });   
+    
+})
+
+router.route('/submit_login')
+.post(async(req,res)=>{
+    const getLogin = await axios({
+        method : 'post',
+        url : 'http://localhost:5000/api/login',
+        data : {
+            username : req.body.username,
+            password : req.body.password
+        },
+        headers : {
+            "Accept": "*/*",
+            "Content-Type": "application/x-www-form-urlencoded"
+        }
+        
+       });
+    const token = getLogin.data.token;
+    res.cookie('access_token', token,{
+         // expires: new Date(Date.now() + 8 * 3600000),
+         // httpOnly : true
+    }).redirect('/thank-you');
 })
 
 router.route('/thank-you')

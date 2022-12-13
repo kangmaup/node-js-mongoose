@@ -279,19 +279,7 @@ const getUserByUsername = async (req, res) => {
   }
 };
 const userLogin = (req,res)=>{
-  // console.log(req.user);
-  const auth = {
-    data : req.user.authJson(),
-    cookie : req.cookies
-  }
-  
-  const token = req.user.authJson().token;
-  res.cookie('access_token', token,{
-    // expires: new Date(Date.now() + 8 * 3600000),
-    // httpOnly : true
-  })
-  .redirect('./ping');
-
+  return res.status(200).json(req.user.authJson());
 }
 
 const logout = async(req,res) => {
@@ -304,8 +292,10 @@ const logout = async(req,res) => {
     // }
 
     // getToken.replace(getToken,'');
-    res.clearCookie('access_token')
-    .redirect('/');
+  res.status(200).json({
+    status : 'berhasil',
+    message : 'Log out berhasil'
+  })
 
   } catch (err) {
     
