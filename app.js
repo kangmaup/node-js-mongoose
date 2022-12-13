@@ -3,39 +3,72 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+// const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const usersRouter = require('./api/modules/Users/users.controller');
+const viewRouter = require('./web/index');
+const blogRouter = require('./api/modules/Blog/blog.controller');
+const authRouter = require('./api/modules/Auth/auth.routes');
+const passport = require('passport');
+const error = require('./api/modules/Error/error.handler');
+const { mongoDB } = require('./config/database.config');
+
+
+
 
 var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+//express-session
+app.use(
+  require('express-session')({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(passport.initialize());
+
+//routes
+app.use('/', viewRouter);
+app.use('/api', usersRouter);
+app.use('/web', blogRouter);
+
+app.post('/test', (req,res)=>{
+    console.log(req.body);
+    console.log('/test');
+})
+
+app.all('*', (req, res, next) => {
+  res
+    .send({
+      status: 'Failed',
+      message: "Can't Find URL on this server",
+    })
+    .status(404);
 });
+
+//view engine setup
+app.set('views', path.join(__dirname, 'view'));
+console.log(app.get('views'))
+app.set('view engine', 'hbs');
+
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+app.use(error.errorHandler401);
+
+app.use(error.errorHandler500);
+app.use(error.errorHandler400);
+
+//connect database
+mongoDB.on('error', (error) => console.error(error));
+mongoDB.once('open', () => console.log('Database Connected'));
 
 module.exports = app;

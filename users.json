@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "name": "maup",
+      "username": "Milidi",
+      "id": "evnrd5eWpHhxUro5",
+      "insertedAt": "2022-11-16T04:49:49.221Z",
+      "updatedAt": "2022-11-16T04:54:36.297Z"
+    },
+    {
+      "name": "wahyu",
+      "username": "wpangestu",
+      "id": "tPUVZHhgjmB8DAXm",
+      "insertedAt": "2022-11-16T07:37:51.300Z",
+      "updatedAt": "2022-11-16T07:37:51.300Z"
+    },
+    {
+      "name": "user3",
+      "username": "pangestu",
+      "id": "Ksp1CrJhrjRax1Wx",
+      "insertedAt": "2022-11-16T09:08:01.879Z",
+      "updatedAt": "2022-11-16T09:08:01.879Z"
+    },
+    {
+      "name": "user5",
+      "username": "pangestu",
+      "id": "KE94U02cK6lqDqTj",
+      "insertedAt": "2022-11-16T10:19:31.050Z",
+      "updatedAt": "2022-11-16T10:19:31.050Z"
+    },
+    {
+      "name": "renoap12",
+      "username": "pangestsau",
+      "id": "B25mjU49iXXxIUgF",
+      "insertedAt": "2022-11-24T11:13:14.049Z",
+      "updatedAt": "2022-11-24T11:13:14.049Z"
+    },
+    {
+      "name": "renoap121",
+      "username": "pangestsau",
+      "id": "vTsqQ6P9_4iAqjwP",
+      "insertedAt": "2022-11-24T11:13:56.316Z",
+      "updatedAt": "2022-11-24T11:13:56.316Z"
+    }
+  ]
+}
