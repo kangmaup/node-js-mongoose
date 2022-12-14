@@ -3,7 +3,7 @@ const passport = require('passport');
 const JWTstrategy = require('passport-jwt').Strategy;
 const { userModel } = require('./user.model');
 const LocalStrategy = require('passport-local');
-const ExtractJwt  = require('passport-jwt').ExtractJwt;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 const dotenv = require('dotenv').config();
 
 const addUser = async (req, res, next) => {
@@ -23,47 +23,53 @@ const addUser = async (req, res, next) => {
   }
 };
 
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    userModel.findOne({ username: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      if (!user.matchPassword(password)) { return done(null, false); }
+passport.use(
+  new LocalStrategy(async function (username, password, done) {
+    try {
+      const user = await userModel.findOne({ username: username });
+      if (!user) {
+        return done(null, false);
+      }
+      const match = await user.matchPassword(password);
+
+      if (!match) {
+        return done(null, false);
+      }
       return done(null, user);
-    });
-  }
-));
+    } catch (error) {
+      return done(error);
+    }
+  })
+);
 
-const authLocal = passport.authenticate('local',{ session:false })
+const authLocal = passport.authenticate('local', { session: false });
 
-const cookieExtractor = req => {
-  let jwt = null 
+const cookieExtractor = (req) => {
+  let jwt = null;
 
   if (req && req.cookies) {
-      jwt = req.cookies['access_token']
+    jwt = req.cookies['access_token'];
   }
   console.log(jwt);
-  return jwt
-}
+  return jwt;
+};
 const jwtOpts = {
   jwtFromRequest: cookieExtractor,
   secretOrKey: process.env.JWT_SECRET,
 };
 passport.use(
-  new JWTstrategy(jwtOpts,
-    async (token, done) => {
-      try {
-        const user = await userModel.findOne({username : token.username});
-        
-        if(!user){
-          return done(null,false);
-        }
-        return done(null, user);
-      } catch (error) {
-        done(error, false);
+  new JWTstrategy(jwtOpts, async (token, done) => {
+    try {
+      const user = await userModel.findOne({ username: token.username });
+
+      if (!user) {
+        return done(null, false);
       }
+      return done(null, user);
+    } catch (error) {
+      done(error, false);
     }
-  )
+  })
 );
-const authJWT = passport.authenticate('jwt', {session:false});
-module.exports = {authJWT,authLocal};
+const authJWT = passport.authenticate('jwt', { session: false });
+module.exports = { authJWT, authLocal };

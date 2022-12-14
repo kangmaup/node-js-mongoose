@@ -46,7 +46,7 @@ UserSchema.methods = {
   createToken() {
     return sign(
       {
-        username : this.username 
+        username: this.username,
       },
       process.env.JWT_SECRET,
       {
@@ -56,12 +56,12 @@ UserSchema.methods = {
     );
   },
 
-  authJson(){
+  authJson() {
     return {
-      _id : this._id,
-      username : this.username,
-      token : this.createToken()
-    }
+      _id: this._id,
+      username: this.username,
+      token: this.createToken(),
+    };
   },
 
   testEnv() {
@@ -69,9 +69,9 @@ UserSchema.methods = {
   },
 };
 
-UserSchema.methods.matchPassword = async function (password) {
+UserSchema.methods.matchPassword = function (password) {
   try {
-    return await bcrypt.compare(password, this.password);
+    return bcrypt.compare(password, this.password);
   } catch (error) {
     throw new Error(error);
   }

@@ -17,9 +17,38 @@ const {
 } = require('./user.handler');
 const { userModel } = require('./user.model');
 
-
-router.route('/profile').get(authJWT,getUserByUsername);
+router.route('/profile').get(authJWT, getUserByUsername);
 router.route('/login').post(authLocal, userLogin);
+// router.route('/login').post((req,res)=>{
+// //  console.log(req.body.username);
+//   userModel.findOne({username : req.body.username})
+//  .exec((err,data)=>{
+//   console.log(data);
+//   if(!data){
+//    return res.status(400).send({
+//     status : 'Fail',
+//     message : 'User Tidak Ditemukan'
+//    });
+//   }
+//   data.matchPassword(req.body.password)
+//   .then((match)=>{
+//     console.log(match);
+//     if(!match){
+//       return res.status(400).send({
+//         status : 'Fail',
+//         message : 'Password Tidak Sama'
+//        });
+//     } else{
+//       return res.status(200).send({
+//         status : 'Sukses',
+//         message : 'Berhasil Login'
+//        });
+//     }
+//   });
+  
+//   })
+
+// });
 router.route('/signup').post(createUser);
 router.route('/all').get(getUser);
 // router.route('/logout')
@@ -31,13 +60,9 @@ router.route('/all').get(getUser);
 //     status : 'Berhasil Logout'
 //   }).status(200);
 // })
-router.route('/logout')
-.get(logout);
-router.route('/ping')
-.get(authJWT,(req,res)=>{
+router.route('/logout').get(logout);
+router.route('/ping').get(authJWT, (req, res) => {
   res.json('pong');
-})
-
-
+});
 
 module.exports = router;

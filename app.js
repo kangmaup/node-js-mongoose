@@ -14,17 +14,21 @@ const authRouter = require('./api/modules/Auth/auth.routes');
 const passport = require('passport');
 const error = require('./api/modules/Error/error.handler');
 const { mongoDB } = require('./config/database.config');
-
-
-
+const { default: helmet } = require('helmet');
+const { rateLimiterMiddleware } = require('./Middlewares/rate-limiter.middleware');
 
 var app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
 //express-session
+app.use(helmet());
+app.use(rateLimiterMiddleware);
+app.use(function (req, res, next) {
+  res.setHeader('access-control-allow-origin', '');
+  next()
+})
 app.use(
   require('express-session')({
     secret: 'keyboard cat',
@@ -40,10 +44,10 @@ app.use('/', viewRouter);
 app.use('/api', usersRouter);
 app.use('/web', blogRouter);
 
-app.post('/test', (req,res)=>{
-    console.log(req.body);
-    console.log('/test');
-})
+app.post('/test', (req, res) => {
+  console.log(req.body);
+  console.log('/test');
+});
 
 app.all('*', (req, res, next) => {
   res
@@ -56,9 +60,8 @@ app.all('*', (req, res, next) => {
 
 //view engine setup
 app.set('views', path.join(__dirname, 'view'));
-console.log(app.get('views'))
+console.log(app.get('views'));
 app.set('view engine', 'hbs');
-
 
 // error handler
 

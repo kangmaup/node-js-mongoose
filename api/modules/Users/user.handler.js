@@ -278,11 +278,16 @@ const getUserByUsername = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-const userLogin = (req,res)=>{
-  return res.status(200).json(req.user.authJson());
-}
+const userLogin = (req, res) => {
+  try {
+    console.log(req.body)
+    return res.status(200).json(req.user.authJson());
+  } catch (error) {
+    return { error: 'error' };
+  }
+};
 
-const logout = async(req,res) => {
+const logout = async (req, res) => {
   try {
     // const getToken = req.headers['authorization'];
     // if(!getToken || getToken === "" ){
@@ -292,17 +297,12 @@ const logout = async(req,res) => {
     // }
 
     // getToken.replace(getToken,'');
-  res.status(200).json({
-    status : 'berhasil',
-    message : 'Log out berhasil'
-  })
-
-  } catch (err) {
-    
-  }
-}
-
-
+    res.status(200).json({
+      status: 'berhasil',
+      message: 'Log out berhasil',
+    });
+  } catch (err) {}
+};
 
 module.exports = {
   getAllUsersHandler,
@@ -316,5 +316,5 @@ module.exports = {
   getPass,
   getUserByUsername,
   logout,
-  userLogin
+  userLogin,
 };
