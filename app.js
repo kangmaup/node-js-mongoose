@@ -17,6 +17,7 @@ const { default: helmet } = require('helmet');
 const {
   rateLimiterMiddleware,
 } = require('./Middlewares/rate-limiter.middleware');
+const { client } = require('./config/redis.config');
 
 var app = express();
 app.use(express.json());
@@ -24,6 +25,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //express-session
+
+// console.log(require('dotenv').config({ path: path.resolve('./.env') }));
 app.use(helmet());
 app.use(rateLimiterMiddleware);
 app.use(function (req, res, next) {
@@ -74,5 +77,21 @@ app.use(error.errorHandler400);
 //connect database
 mongoDB.on('error', (error) => console.error(error));
 mongoDB.once('open', () => console.log('Database Connected'));
+
+//redis
+
+(async() => {
+
+client.on('error', (err) => console.log('Redis Client Error', err));
+
+await client.connect();
+console.log(client.isReady);  
+if(client.isReady){
+  console.log('Redis Connected')
+}else{
+  console.log('Redis Not Connected')
+}
+
+})();
 
 module.exports = app;

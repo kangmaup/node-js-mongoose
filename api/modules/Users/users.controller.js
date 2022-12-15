@@ -17,6 +17,8 @@ const {
 } = require('./user.handler');
 const { userModel } = require('./user.model');
 
+router.route('/register').post(createUser);
+router.route('/getUsers').get(getUser)
 router.route('/profile').get(authJWT, getUserByUsername);
 router.route('/login').post(authLocal, userLogin);
 // router.route('/login').post((req,res)=>{
