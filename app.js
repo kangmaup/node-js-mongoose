@@ -1,12 +1,11 @@
 var createError = require('http-errors');
 var express = require('express');
-var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 // const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-
+const path = require('path');
 const usersRouter = require('./api/modules/Users/users.controller');
 const viewRouter = require('./web/index');
 const blogRouter = require('./api/modules/Blog/blog.controller');
@@ -15,7 +14,9 @@ const passport = require('passport');
 const error = require('./api/modules/Error/error.handler');
 const { mongoDB } = require('./config/database.config');
 const { default: helmet } = require('helmet');
-const { rateLimiterMiddleware } = require('./Middlewares/rate-limiter.middleware');
+const {
+  rateLimiterMiddleware,
+} = require('./Middlewares/rate-limiter.middleware');
 
 var app = express();
 app.use(express.json());
@@ -27,8 +28,8 @@ app.use(helmet());
 app.use(rateLimiterMiddleware);
 app.use(function (req, res, next) {
   res.setHeader('access-control-allow-origin', '');
-  next()
-})
+  next();
+});
 app.use(
   require('express-session')({
     secret: 'keyboard cat',

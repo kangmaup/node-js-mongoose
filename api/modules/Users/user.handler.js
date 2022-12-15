@@ -280,7 +280,7 @@ const getUserByUsername = async (req, res) => {
 };
 const userLogin = (req, res) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     return res.status(200).json(req.user.authJson());
   } catch (error) {
     return { error: 'error' };

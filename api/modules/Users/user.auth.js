@@ -4,7 +4,6 @@ const JWTstrategy = require('passport-jwt').Strategy;
 const { userModel } = require('./user.model');
 const LocalStrategy = require('passport-local');
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const dotenv = require('dotenv').config();
 
 const addUser = async (req, res, next) => {
   try {
