@@ -3,7 +3,7 @@ const { response } = require('express');
 var express = require('express');
 const { handlebars } = require('hbs');
 const { verify } = require('jsonwebtoken');
-const { authJWT } = require('../api/modules/Users/user.auth');
+const { authJWT, verifyJWT } = require('../api/modules/Users/user.auth');
 const router = express.Router();
 
 /* GET home page. */
@@ -39,7 +39,7 @@ router.route('/submit_login').post(async (req, res) => {
     .redirect('/thank-you');
 });
 
-router.route('/thank-you').get(authJWT, (req, res) => {
+router.route('/thank-you').get(verifyJWT, (req, res) => {
   res.render('auth/thank-you');
 });
 router.route('/logout').get((req, res) => {

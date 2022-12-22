@@ -3,7 +3,9 @@ const passport = require('passport');
 const JWTstrategy = require('passport-jwt').Strategy;
 const { userModel } = require('./user.model');
 const LocalStrategy = require('passport-local');
+const { userEntity } = require('./user.entity');
 const ExtractJwt = require('passport-jwt').ExtractJwt;
+const bcrypt = require('bcryptjs');
 
 const addUser = async (req, res, next) => {
   try {
@@ -25,13 +27,22 @@ const addUser = async (req, res, next) => {
 passport.use(
   new LocalStrategy(async function (username, password, done) {
     try {
-      const user = await userModel.findOne({ username: username });
+      // const user = await userModel.findOne({ username: username });
+      const user = await userEntity.findOne({
+        where: {
+          username: username
+        }
+      })
+      console.log(user.dataValues);
+      console.log(password);
       if (!user) {
+        console.log('abc');
         return done(null, false);
       }
-      const match = await user.matchPassword(password);
-
+      const match = await bcrypt.compare(password, user.dataValues.password);
+      console.log(match);
       if (!match) {
+        // console.log('def');
         return done(null, false);
       }
       return done(null, user);
@@ -41,7 +52,7 @@ passport.use(
   })
 );
 
-const authLocal = passport.authenticate('local', { session: false });
+const verifyUserLocal = passport.authenticate('local', { session: false });
 
 const cookieExtractor = (req) => {
   let jwt = null;
@@ -59,8 +70,12 @@ const jwtOpts = {
 passport.use(
   new JWTstrategy(jwtOpts, async (token, done) => {
     try {
-      const user = await userModel.findOne({ username: token.username });
-
+      // const user = await userModel.findOne({ username: token.username });
+      const user = await userEntity.findOne({
+        where: {
+          username: token.username
+        }
+      })
       if (!user) {
         return done(null, false);
       }
@@ -70,5 +85,5 @@ passport.use(
     }
   })
 );
-const authJWT = passport.authenticate('jwt', { session: false });
-module.exports = { authJWT, authLocal };
+const verifyJWT = passport.authenticate('jwt', { session: false });
+module.exports = { verifyJWT, verifyUserLocal };

@@ -7,7 +7,14 @@ module.exports = {
         JWT_SECRET:"tokencok",
         JWT_EXPIRES: "10m",
         JWT_ALGORITHM: "HS256",
-        PORT: 5000
+        PORT: 5000,
+        APP_DATABASE:"app",
+        DB_DIALECT:"postgres",
+        DB_USERNAME:"postgres",
+        DB_PASSWORD:"postgre",
+        DB_PORT:5432,
+        DB_LOG:true,
+        DB_SYNC:true,
       },
       env_test: {
         NODE_ENV: "test",

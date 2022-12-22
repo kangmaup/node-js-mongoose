@@ -15,6 +15,7 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^16.0.3",
+    "dotenv-parse-variables": "^2.0.0",
     "express": "~4.16.1",
     "express-handlebars": "^6.0.6",
     "express-jwt": "^7.7.7",
@@ -31,8 +32,12 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^7.1.2",
+    "pg": "^8.8.0",
+    "pg-hstore": "^2.3.4",
     "rate-limiter-flexible": "^2.4.1",
-    "redis": "^4.5.1"
+    "redis": "^4.5.1",
+    "sequelize": "^6.28.0",
+    "whois": "^2.14.0"
   },
   "devDependencies": {
     "nanoid": "^3.0.0",

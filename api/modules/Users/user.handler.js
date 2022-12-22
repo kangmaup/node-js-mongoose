@@ -2,6 +2,7 @@ const { default: mongoose, Schema } = require('mongoose');
 const { nanoid } = require('nanoid');
 const { userModel } = require('./user.model');
 const { createHmac, verify } = require('node:crypto');
+const bcrypt = require('bcryptjs');
 // const { use } = require("..");
 const {
   readjson,
@@ -13,6 +14,10 @@ const { ExtractJwt } = require('passport-jwt');
 const JwtStrategy = require('passport-jwt').Strategy;
 const { authenticate, use } = require('passport');
 const console = require('node:console');
+const { postgre } = require('../../../config/postgre.config');
+const { userEntity } = require('./user.entity');
+const { sign:jwtSign } = require('jsonwebtoken');
+
 
 const getAllUsersHandler = async (req, res) => {
   const users = await readjson();
@@ -183,8 +188,27 @@ const deleteUserByIdHandler = async (request, res) => {
 };
 
 const createUser = async (req, res) => {
-  const user = new userModel(req.body);
+ 
+  
   try {
+    const refreshToken = jwtSign({
+      data: req.body,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRES,
+      algorithm: process.env.JWT_ALGORITHM,
+    });
+    const user = new userModel({...req.body,refreshtoken:refreshToken});
+    // const pass = await bcrypt.hash(req.body.password,10);
+    await userEntity.beforeCreate(async (req, options) => {
+      const hashedPassword = await bcrypt.hash(req.password,10);
+      req.password = hashedPassword;
+      // console.log(hashedPassword);
+    });
+    //postgre
+    await userEntity.create({...req.body,refreshtoken:refreshToken});
+    //save mongoose
     await user.save();
     res
       .send({
@@ -280,12 +304,35 @@ const getUserByUsername = async (req, res) => {
 };
 const userLogin = (req, res) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
     return res.status(200).json(req.user.authJson());
   } catch (error) {
     return { error: 'error' };
   }
+ 
+
+
 };
+
+const userLoginPG = async(req,res)=>{
+  try {
+    const user = await userEntity.findOne({
+      where: {
+        username: req.body.username
+      }
+    })
+
+    const match = await bcrypt.compare(req.body.password,user.password );
+
+      // if (!match) {
+      //   return done(null, false);
+      // }
+    console.log(match);
+    res.send(user)
+  } catch (error) {
+    
+  }
+}
 
 const logout = async (req, res) => {
   try {
@@ -301,8 +348,24 @@ const logout = async (req, res) => {
       status: 'berhasil',
       message: 'Log out berhasil',
     });
-  } catch (err) {}
+  } catch (err) {
+
+  }
 };
+
+const getUserPostgre = async (req,res) =>{
+  const id = req.params.id;
+  console.log(+id);
+  const user = await userEntity.findOne({
+    where:{
+      id
+    }
+  })
+
+  res.send(user);
+  
+}
+
 
 module.exports = {
   getAllUsersHandler,
@@ -317,4 +380,6 @@ module.exports = {
   getUserByUsername,
   logout,
   userLogin,
+  getUserPostgre,
+  userLoginPG
 };

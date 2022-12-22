@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const { has } = require('browser-sync');
 const bcrypt = require('bcryptjs');
 const passportLocalMongoose = require('passport-local-mongoose');
-const { JsonWebTokenError, sign } = require('jsonwebtoken');
+const { JsonWebTokenError, sign:jwtsign } = require('jsonwebtoken');
 const env = require('dotenv').config();
 const Schema = mongoose.Schema;
 /**
@@ -29,6 +29,10 @@ const UserSchema = new Schema({
     type: String,
     default: '',
   },
+  refreshtoken:{
+    type: String,
+    unique: true
+  }
 });
 
 UserSchema.pre('save', async function (next) {
@@ -44,13 +48,13 @@ UserSchema.pre('save', async function (next) {
  */
 UserSchema.methods = {
   createToken() {
-    return sign(
+    return jwtsign(
       {
         username: this.username,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: process.env.JWT_EXPIRES,
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRATION,
         algorithm: process.env.JWT_ALGORITHM,
       }
     );
